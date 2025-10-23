@@ -509,10 +509,9 @@ def _do_clean(feat, current_version, last_version):
             return ret, out, err
         # should be only one item in local_image_version_dict
         for k, v in local_image_version_dict.items():
-            local_version, local_repo, local_image_id = k, v[REPO], v[IMAGE_ID]
-            # if there is a kube image with same version, need to remove the kube version
-            # and tag the local version to kube version for fallback preparation
-            # and remove the local version
+            local_version, local_repo, local_docker_id = k, v[REPO], v[DOCKER_ID]
+            tag_res, _, err = _run_command(""docker tag {} {}:{} && docker rmi {}:{}"".format(
+                local_docker_id, image_prefix, local_version, local_repo, local_version))
             if local_version in remote_image_version_dict:
                 tag_res, _, err = _run_command("docker rmi {}:{} && docker tag {} {}:{} && docker rmi {}:{}".format(
                 image_prefix, local_version, local_image_id, image_prefix, local_version, local_repo, local_version))
